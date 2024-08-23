@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 
@@ -28,11 +27,11 @@ func main() {
 		MaxAge:           300,
 	}))
 
-	router.Route("/song/1", func(r chi.Router) {
-		router.Get("/", getSong)
-		router.Post("/", saveSong)
-		router.Delete("/", deleteSong)
+	router.Route("/song", func(r chi.Router) {
+
+		r.Get("/1", getSong)
 	})
+
 	http.ListenAndServe(":3000", router)
 }
 
@@ -46,15 +45,15 @@ type Song struct {
 }
 
 func getSong(w http.ResponseWriter, r *http.Request) {
-	audioBytesPath := "../assets/rxk.mp3"
+	audioBytesPath := "./assets/rxk.mp3"
 	audioBytes, err := os.ReadFile(audioBytesPath)
 	audioBase64 := base64.StdEncoding.EncodeToString(audioBytes)
+
 	if err != nil {
-		fmt.Print("could not get song")
 		http.Error(w, "Could not find song", http.StatusInternalServerError)
 		return
 	}
-	fmt.Println("got song !")
+
 	response := Song{
 		Id:         1,
 		Title:      "Ginger Claps",
@@ -62,22 +61,13 @@ func getSong(w http.ResponseWriter, r *http.Request) {
 		Album:      "Wlfgrl",
 		AudioBytes: audioBase64,
 	}
+
 	jsonData, err := json.Marshal(response)
+
 	if err != nil {
 		http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
 		return
 	}
-
-	// Set the correct Content-Type header
 	w.Header().Set("Content-Type", "application/json")
-
-	// Write the JSON data
 	w.Write(jsonData)
-}
-
-func saveSong(w http.ResponseWriter, r *http.Request) {
-}
-
-func deleteSong(w http.ResponseWriter, r *http.Request) {
-
 }
