@@ -30,6 +30,6 @@ func SetupRoutes() *chi.Mux {
 	return r
 }
 func songRoutes(r chi.Router) {
-	r.Get("/1", GetSong)
-	r.Get("/GetShitFromDb", GetSongFromDb)
+	r.Post("/CreateSong", CreateSong)
+	r.Get("/GetSong", GetSongFromDb)
 }

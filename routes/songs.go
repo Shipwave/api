@@ -1,49 +1,28 @@
 package routes
 
 import (
-	"encoding/base64"
-	"encoding/json"
 	"net/http"
-	"os"
 
 	"github.com/campbell-frost/Shipwave/server/services"
 )
 
 type Song struct {
-	Id          int    `json:"id"`
-	Title       string `json:"title"`
-	Artist      string `json:"artist"`
-	Album       string `json:"album"`
-	AudioBytes  string `json:"audio_bytes,omitempty"`
-	CoverArtURL string `json:"cover_art_url,omitempty"`
+	Id     int    `json:"id"`
+	Title  string `json:"title"`
+	Artist string `json:"artist"`
+	Album  string `json:"album"`
 }
 
-func GetSong(w http.ResponseWriter, r *http.Request) {
-	audioBytesPath := "./assets/rxk.mp3"
-	audioBytes, err := os.ReadFile(audioBytesPath)
-	audioBase64 := base64.StdEncoding.EncodeToString(audioBytes)
+func CreateSong(w http.ResponseWriter, r *http.Request) {
+	err := services.CreateSong()
 	if err != nil {
-		http.Error(w, "Could not find song", http.StatusInternalServerError)
-		return
+		http.Error(w, "could not create song", http.StatusInternalServerError)
 	}
-	response := Song{
-		Id:         1,
-		Title:      "Ginger Claps",
-		Artist:     "Machine Girl",
-		Album:      "Wlfgrl",
-		AudioBytes: audioBase64,
-	}
-	jsonData, err := json.Marshal(response)
-	if err != nil {
-		http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
-		return
-	}
-	w.Write(jsonData)
 }
 
 func GetSongFromDb(w http.ResponseWriter, r *http.Request) {
-	err := services.CreateSong()
+	err := services.GetSongs()
 	if err != nil {
-		http.Error(w, "could not create song", 3)
+		http.Error(w, "Could not get song from db", http.StatusInternalServerError)
 	}
 }
