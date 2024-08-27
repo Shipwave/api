@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+
+	"github.com/campbell-frost/Shipwave/server/services"
 )
 
 type Song struct {
@@ -37,4 +39,11 @@ func GetSong(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write(jsonData)
+}
+
+func GetSongFromDb(w http.ResponseWriter, r *http.Request) {
+	err := services.CreateSong()
+	if err != nil {
+		http.Error(w, "could not create song", 3)
+	}
 }

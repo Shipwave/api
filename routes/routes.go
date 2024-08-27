@@ -31,4 +31,5 @@ func SetupRoutes() *chi.Mux {
 }
 func songRoutes(r chi.Router) {
 	r.Get("/1", GetSong)
+	r.Get("/GetShitFromDb", GetSongFromDb)
 }
